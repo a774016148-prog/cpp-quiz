@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار C++ التفاعلي - IT مستوى أول</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;padding:18px;color:#17202a}
+.container{max-width:720px;margin:auto}
+h1{text-align:center}
+.subtitle{text-align:center;color:#555;margin-bottom:20px}
+.card{background:#fff;border-radius:14px;padding:18px;margin:15px 0;box-shadow:0 2px 10px #0001}
+.q{font-size:18px;font-weight:bold;margin-bottom:12px}
+pre{direction:ltr;text-align:left;background:#111;color:#eee;padding:12px;border-radius:9px;overflow:auto}
+button{width:100%;padding:12px;margin:7px 0;border:1px solid #ccd3da;border-radius:9px;background:#f8f9fa;font-size:16px;cursor:pointer}
+button:hover{background:#e9ecef}
+.correct{background:#d4edda!important;border-color:#28a745!important}
+.wrong{background:#f8d7da!important;border-color:#dc3545!important}
+.result{font-weight:bold;margin-top:10px}
+.explain{margin-top:7px;color:#444;font-size:14px}
+#score{position:sticky;top:0;background:#17202a;color:white;padding:12px;border-radius:10px;text-align:center;z-index:5}
+.reset{background:#17202a;color:#fff;border:none;margin-bottom:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔥 اختبار C++ التفاعلي</h1>
+<div class="subtitle">IT مستوى أول — اضغط على الإجابة وستظهر لك فورًا ✅ أو ❌</div>
+<div id="score">النتيجة: 0 / 20</div>
+<div id="quiz"></div>
+<button class="reset" onclick="location.reload()">إعادة الاختبار 🔄</button>
+</div>
+
+<script>
+const questions = [
+{q:"ما ناتج الكود؟",code:`int x = 10;\nif (x > 5)\n    cout << "A";\nelse\n    cout << "B";`,a:["A","B","AB","Error"],c:0,e:"لأن 10 أكبر من 5، الشرط True، لذلك تُنفذ A."},
+{q:"ما ناتج الكود؟",code:`int x = 5;\nif (x == 5)\n    cout << "True";\nelse\n    cout << "False";`,a:["True","False","Error","لا شيء"],c:0,e:"== للمقارنة، و5 تساوي 5."},
+{q:"ما قيمة x بعد التنفيذ؟",code:`int x = 10;\nx++;\nx += 5;`,a:["15","16","11","10"],c:1,e:"x++ تجعلها 11، ثم +=5 تجعلها 16."},
+{q:"ما ناتج؟",code:`cout << 17 / 4;`,a:["4","4.25","5","Error"],c:0,e:"كلا العددين int، لذلك القسمة الصحيحة تعطي 4."},
+{q:"ما ناتج؟",code:`cout << 17 % 4;`,a:["4","1","4.25","0"],c:1,e:"% يعطي باقي القسمة، وباقي 17 ÷ 4 هو 1."},
+{q:"ما ناتج البرنامج؟",code:`int x = 5;\nif (x % 2 == 0)\n    cout << "Even";\nelse\n    cout << "Odd";`,a:["Even","Odd","5","Error"],c:1,e:"5 % 2 = 1، إذن العدد فردي Odd."},
+{q:"ما ناتج؟",code:`int x = 5;\ncout << x++;\ncout << x;`,a:["55","56","65","66"],c:1,e:"x++ تطبع القيمة القديمة 5 ثم تزيد x إلى 6، فيكون الناتج 56."},
+{q:"أي معامل يعني (لا يساوي)؟",code:`if (x ? 10)`,a:["==","!=","=","%"],c:1,e:"!= تعني Not Equal أي لا يساوي."},
+{q:"ما ناتج تحويل A إلى حرف صغير بهذه الطريقة؟",code:`char ch = 'A';\ncout << char(ch + 32);`,a:["A","a","65","97"],c:1,e:"في ASCII الحرف a يبعد 32 عن A."},
+{q:"ما القيمة العشرية للحرف A في ASCII؟",code:`char ch = 'A';`,a:["97","65","32","48"],c:1,e:"ASCII للحرف A هو 65، وللحرف a هو 97."},
+{q:"ما ناتج؟",code:`double x = 17;\ncout << x / 4;`,a:["4","4.25","5","Error"],c:1,e:"وجود double يجعل القسمة عشرية: 17 ÷ 4 = 4.25."},
+{q:"أي نوع بيانات مناسب لتخزين حرف واحد؟",code:`char grade = 'A';`,a:["int","double","char","string"],c:2,e:"char مخصص لتخزين حرف واحد مثل 'A'."},
+{q:"أي تعليمة تستخدم لإدخال قيمة من المستخدم؟",code:`int x;\n_____ x;`,a:["cout >> x","cin >> x","input x","read >> x"],c:1,e:"cin تُستخدم للإدخال، و>> تنقل القيمة إلى المتغير."},
+{q:"أي تعليمة تستخدم لإخراج البيانات؟",code:`_____ << x;`,a:["cin","cout","input","get"],c:1,e:"cout تُستخدم لإظهار البيانات على الشاشة."},
+{q:"ما المشكلة في الكود التالي؟",code:`int x = 10;\nif (x > 5)\n    cout << "A";\n    cout << "B";\nelse\n    cout << "C";`,a:["لا توجد مشكلة","else بدون if مرتبط","يظهر AB","Error"],c:3,e:"لأن else أصبحت بدون if مباشرة؛ السطر الثاني خارج جسم if، فيحدث خطأ."},
+{q:"إذا كان الشرط False، ماذا يحدث في if العادية؟",code:`if (condition)\n    cout << "Yes";`,a:["تنفذ Yes","لا تنفذ Yes","تنفذ مرتين","يحدث دائمًا Error"],c:1,e:"جسم if يُنفذ فقط عندما يكون الشرط True."},
+{q:"ما ناتج؟",code:`int x = 3;\nif (x >= 3 && x < 5)\n    cout << "Yes";\nelse\n    cout << "No";`,a:["Yes","No","3","Error"],c:0,e:"الشرطان صحيحان: 3>=3 و3<5، ومع && يجب أن يكون كلاهما True."},
+{q:"ما ناتج؟",code:`int x = 4;\ncout << (x != 4);`,a:["1","0","4","Error"],c:1,e:"x != 4 تعني: هل 4 لا تساوي 4؟ الإجابة False، وFalse في C++ تُطبع 0."},
+{q:"أي عبارة صحيحة عن الأقواس {} في if؟",code:`if (x > 0) {\n    cout << "A";\n    cout << "B";\n}`,a:["تجعل أول سطر فقط تابعًا","تجعل كل ما بداخلها تابعًا للـ if","تلغي الشرط","تستخدم للإدخال"],c:1,e:"الأقواس تجمع عدة تعليمات داخل جسم if."},
+{q:"ما ناتج؟",code:`int x = 2;\nx += 3;\nx *= 2;\ncout << x;`,a:["5","7","10","12"],c:2,e:"2+3=5 ثم 5×2=10."}
+];
+
+let score=0, answered=0;
+const quiz=document.getElementById("quiz"), scoreEl=document.getElementById("score");
+questions.forEach((item,i)=>{
+  const card=document.createElement("div"); card.className="card";
+  card.innerHTML=`<div class="q">${i+1}) ${item.q}</div>${item.code?`<pre>${item.code}</pre>`:""}`;
+  item.a.forEach((ans,j)=>{
+    const b=document.createElement("button"); b.textContent=ans;
+    b.onclick=()=>{
+      if(card.dataset.done) return;
+      card.dataset.done="1"; answered++;
+      if(j===item.c){b.classList.add("correct");score++; result.textContent="✅ إجابة صحيحة"; result.style.color="#198754";}
+      else{b.classList.add("wrong"); card.querySelectorAll("button")[item.c].classList.add("correct"); result.textContent="❌ إجابة خاطئة — الإجابة الصحيحة: "+item.a[item.c]; result.style.color="#dc3545";}
+      exp.textContent=item.e;
+      card.querySelectorAll("button").forEach(x=>x.disabled=true);
+      scoreEl.textContent=`النتيجة: ${score} / ${questions.length} — أجب عن ${answered} / ${questions.length}`;
+    };
+    card.appendChild(b);
+  });
+  const result=document.createElement("div"); result.className="result";
+  const exp=document.createElement("div"); exp.className="explain";
+  card.appendChild(result); card.appendChild(exp); quiz.appendChild(card);
+});
+</script>
+</body>
+</html>
